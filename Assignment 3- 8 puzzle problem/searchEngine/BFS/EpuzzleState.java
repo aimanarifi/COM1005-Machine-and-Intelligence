@@ -38,10 +38,11 @@ public class EpuzzleState extends SearchState {
     */
     public ArrayList<SearchState> getSuccessors(Search searcher){
     	
+    	EpuzzleSearch puzzleSearcher = (EpuzzleSearch) searcher;
     	int row = 0;
     	int col = 0;
-    	for (int i = 0; i < 3; i++) {
-    		for (int j = 0; i < 3; j++) {
+    	for (int i = 0; i < puzzleSearcher.getPuzzleLayout().length; i++) {
+    		for (int j = 0; j < puzzleSearcher.getPuzzleLayout().length; j++) {
     			if (puzzleLayout[i][j] == 0) {
     				row = i;
     				col = j;
@@ -52,36 +53,35 @@ public class EpuzzleState extends SearchState {
     	ArrayList<EpuzzleState> puzStateList = new ArrayList<EpuzzleState>();
     	ArrayList<SearchState> puzSearchStateList = new ArrayList<SearchState>();
     	
-    	if ( row - 1 != -1 ) {
-        	if ( col - 1 != -1 ) {
-        		int[][] newLayout = this.copyLayout();
-        		newLayout[row][col] = newLayout[row - 1][col - 1];
-        		newLayout[row - 1][col - 1] = 0;
-        		puzStateList.add(new EpuzzleState(newLayout));
-        	}
-        	if ( col + 1 != 3 ) {
-        		int[][] newLayout = this.copyLayout();
-        		newLayout[row][col] = newLayout[row - 1][col + 1];
-        		newLayout[row - 1][col + 1] = 0;
-        		puzStateList.add(new EpuzzleState(newLayout));
-        	}
+    	//Swap places with number above
+    	if ( row != 0 ) {
+    		int[][] newLayout = this.copyLayout();
+    		newLayout[row][col] = newLayout[row - 1][col];
+    		newLayout[row - 1][col] = 0;
+    		puzStateList.add(new EpuzzleState(newLayout));
     	}
-    	
-    	if ( row + 1 != 3 ) {
-        	if ( col - 1 != -1 ) {
-        		int[][] newLayout = this.copyLayout();
-        		newLayout[row][col] = newLayout[row + 1][col - 1];
-        		newLayout[row + 1][col - 1] = 0;
-        		puzStateList.add(new EpuzzleState(newLayout));
-        	}
-        	if ( col + 1 != 3 ) {
-        		int[][] newLayout = this.copyLayout();
-        		newLayout[row][col] = newLayout[row + 1][col + 1];
-        		newLayout[row + 1][col + 1] = 0;
-        		puzStateList.add(new EpuzzleState(newLayout));	
-        	}
+    	//Swap places with number below
+    	if ( row != puzzleSearcher.getPuzzleLayout().length - 1) {
+    		int[][] newLayout = this.copyLayout();
+    		newLayout[row][col] = newLayout[row + 1][col];
+    		newLayout[row + 1][col] = 0;
+    		puzStateList.add(new EpuzzleState(newLayout));
     	}
-    	
+    	//Swap places with number on the left
+    	if ( col != 0 ) {
+        	int[][] newLayout = this.copyLayout();
+        	newLayout[row][col] = newLayout[row][col - 1];
+        	newLayout[row][col - 1] = 0;
+        	puzStateList.add(new EpuzzleState(newLayout));
+        }
+    	//Swap places with number on the right
+        if ( col != puzzleSearcher.getPuzzleLayout().length - 1) {
+        	int[][] newLayout = this.copyLayout();
+        	newLayout[row][col] = newLayout[row][col + 1];
+        	newLayout[row][col + 1] = 0;
+        	puzStateList.add(new EpuzzleState(newLayout));	
+        }
+        
     	for (EpuzzleState state: puzStateList) {
     		puzSearchStateList.add(state);
     	}
@@ -92,12 +92,12 @@ public class EpuzzleState extends SearchState {
     /**
     * sameState: is this state identical to a given one?
     */
-    public boolean sameState(SearchState n2) {
-    	int[][] n2layout = ((EpuzzleState)n2).getPuzzleLayout();
+    public boolean sameState(SearchState puzzleState) {
+    	int[][] otherPuzzleLayout = ((EpuzzleState)puzzleState).getPuzzleLayout();
     	//compare number in all positions
-    	for(int i = 0; i <= 3; i++) {
-    		for (int j = 0; j <= 3; j++) {
-    			if (this.puzzleLayout[i][j] != n2layout[i][j]) { return false;}
+    	for(int i = 0; i < otherPuzzleLayout.length; i++) {
+    		for (int j = 0; j < otherPuzzleLayout.length ; j++) {
+    			if (this.puzzleLayout[i][j] != otherPuzzleLayout[i][j]) { return false;}
     		}
     	}
     	return true;
@@ -114,13 +114,18 @@ public class EpuzzleState extends SearchState {
     public String toString() {
     	String output = "";
     	for(int[] row: this.getPuzzleLayout()) {
-    		output = output + "+-+-+-+\n|";
+    		output = output + "+---+---+---+\n|";
     		for(int col: row) {
-    			output = output + col + "|";
+    			if(col != 0) {
+    			output = output + " " + col + " |";
+    			}
+    			else {
+    				output = output + "   |";
+    			}
     		}
     		output = output + "\n";
     	}
-    	output = output + "+-+-+-+";
+    	output = output + "+---+---+---+";
     	return output;
     }
 }
