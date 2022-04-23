@@ -54,32 +54,24 @@ public class EpuzzleState extends SearchState {
     	ArrayList<SearchState> puzSearchStateList = new ArrayList<SearchState>();
     	
     	//Swap places with number above
-    	if ( row != 0 ) {
-    		int[][] newLayout = this.copyLayout();
-    		newLayout[row][col] = newLayout[row - 1][col];
-    		newLayout[row - 1][col] = 0;
+    	if ( row > 0 ) {
+    		int[][] newLayout = swapNumber(row , col , row-1 , col);
     		puzStateList.add(new EpuzzleState(newLayout));
     	}
     	//Swap places with number below
-    	if ( row != puzzleSearcher.getPuzzleLayout().length - 1) {
-    		int[][] newLayout = this.copyLayout();
-    		newLayout[row][col] = newLayout[row + 1][col];
-    		newLayout[row + 1][col] = 0;
+    	if ( row < puzzleSearcher.getPuzzleLayout().length - 1) {
+    		int[][] newLayout = swapNumber(row , col , row+1 , col);
     		puzStateList.add(new EpuzzleState(newLayout));
     	}
     	//Swap places with number on the left
-    	if ( col != 0 ) {
-        	int[][] newLayout = this.copyLayout();
-        	newLayout[row][col] = newLayout[row][col - 1];
-        	newLayout[row][col - 1] = 0;
-        	puzStateList.add(new EpuzzleState(newLayout));
+    	if ( col > 0 ) {
+    		int[][] newLayout = swapNumber(row , col , row , col-1);
+    		puzStateList.add(new EpuzzleState(newLayout));
         }
     	//Swap places with number on the right
-        if ( col != puzzleSearcher.getPuzzleLayout().length - 1) {
-        	int[][] newLayout = this.copyLayout();
-        	newLayout[row][col] = newLayout[row][col + 1];
-        	newLayout[row][col + 1] = 0;
-        	puzStateList.add(new EpuzzleState(newLayout));	
+        if ( col < puzzleSearcher.getPuzzleLayout().length - 1) {
+    		int[][] newLayout = swapNumber(row , col , row , col+1);
+    		puzStateList.add(new EpuzzleState(newLayout));
         }
         
     	for (EpuzzleState state: puzStateList) {
@@ -103,11 +95,20 @@ public class EpuzzleState extends SearchState {
     	return true;
     }
     
-    public int[][] copyLayout(){
-		int[][] tempLayout = new int[this.puzzleLayout.length][];
-		for( int i = 0; i < this.puzzleLayout.length; i++) {
-			tempLayout[i] = puzzleLayout[i].clone();
-		}
+    /**
+     * Swap 0 (blank) position with the selected position
+     * @param row - row of the position
+     * @param col - column of the position
+     * @return new puzzle layout
+     */
+    public int[][] swapNumber(int row1, int col1, int row2, int col2){
+    	//create new copy of the puzzle
+		int[][] tempLayout = new int[this.getPuzzleLayout().length][];
+		for( int i = 0; i < this.getPuzzleLayout().length; i++) {
+			tempLayout[i] = getPuzzleLayout()[i].clone();
+		}	
+    	tempLayout[row1][col1] = tempLayout[row2][col2];
+    	tempLayout[row2][col2] = 0;
 		return tempLayout;
     }
 	
