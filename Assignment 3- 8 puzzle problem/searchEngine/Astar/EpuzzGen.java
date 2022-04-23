@@ -69,7 +69,18 @@ public class EpuzzGen {
       k = this.manhattan(puzzq, this.tar);
       return i % 2 != 0 || k > diff;
    }
-
+   
+   public int estRemCostMethod(int[][] s, int[][] t, String method) {
+	   int remCost = 0;
+	   if( method.equalsIgnoreCase("manhattan")) {
+		   remCost = this.manhattan(s, t);
+	   } 
+	   else if(method.equalsIgnoreCase("hamming")) {
+		   remCost = this.hamming(s, t);
+	   }
+	   
+	   return remCost;
+   }
    private int manhattan(int[][] s, int[][] t) {
       int d = 0;
       int si = 0;
@@ -97,5 +108,18 @@ public class EpuzzGen {
       }
 
       return d;
+   }
+   
+   private int hamming(int[][] s, int[][] t) {
+	   int hamming = 0;
+	   
+	   for(int i = 0; i <= 2; i++) {
+		   for(int j = 0; j <= 2; j++) {
+			   if( s[i][j] != t[i][j]) {
+				   hamming++;
+			   }
+		   }
+	   }
+	   return hamming;
    }
 }
