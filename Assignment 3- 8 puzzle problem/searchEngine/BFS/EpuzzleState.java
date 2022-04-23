@@ -110,5 +110,17 @@ public class EpuzzleState extends SearchState {
 		}
 		return tempLayout;
     }
-
+	
+    public String toString() {
+    	String output = "";
+    	for(int[] row: this.getPuzzleLayout()) {
+    		output = output + "+-+-+-+\n|";
+    		for(int col: row) {
+    			output = output + col + "|";
+    		}
+    		output = output + "\n";
+    	}
+    	output = output + "+-+-+-+";
+    	return output;
+    }
 }
