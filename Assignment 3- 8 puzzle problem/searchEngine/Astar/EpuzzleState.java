@@ -8,24 +8,11 @@ public class EpuzzleState extends SearchState {
 		EpuzzleSearch puzzSearcher = (EpuzzleSearch) searcher;
 		this.puzzleLayout = puzzleLayout;
 		localCost = 1;
-		this.estRemCost = calcEstRemCost(searcher, puzzleLayout, puzzSearcher.getTarget(), puzzSearcher.getRemCostCalcMethod());
+		this.estRemCost = calcEstRemCost(puzzleLayout, puzzSearcher.getTarget(), puzzSearcher.getRemCostCalcMethod());
 	}
 	
     public int[][] getPuzzleLayout(){
     	return puzzleLayout;
-    }
-    
-    /**
-     * calculate remaining cost from the current layout to the target layout
-     * @param searcher 
-     * @param s - current layout
-     * @param t - target layout
-     * @param costMethod - either Manhattan or Hamming
-     * @return estimated remaining cost
-     */
-    public int calcEstRemCost(Search searcher, int[][] s, int[][] t, String costMethod) {
-    	EpuzzleSearch puzzSearcher = (EpuzzleSearch) searcher;
-    	return puzzSearcher.getPuzzGen().estRemCostMethod(s, t, costMethod);
     }
     
     /**
@@ -124,6 +111,69 @@ public class EpuzzleState extends SearchState {
 		return tempLayout;
     }
     
+    /**
+     * calculate remaining cost from the current layout to the target layout
+     * @param searcher 
+     * @param s - current layout
+     * @param t - target layout
+     * @param costMethod - either Manhattan or Hamming
+     * @return estimated remaining cost
+     */
+
+    public int calcEstRemCost(int[][] s, int[][] t, String method) {
+ 	   int remCost = 0;
+ 	   if( method.equalsIgnoreCase("manhattan")) {
+ 		   remCost = this.manhattan(s, t);
+ 	   } 
+ 	   else if(method.equalsIgnoreCase("hamming")) {
+ 		   remCost = this.hamming(s, t);
+ 	   }
+ 	   
+ 	   return remCost;
+    }
+    
+    private int manhattan(int[][] s, int[][] t) {
+        int d = 0;
+        int si = 0;
+        int sj = 0;
+
+        for(int n = 0; n <= 8; ++n) {
+           int i;
+           int j;
+           for(i = 0; i <= 2; ++i) {
+              for(j = 0; j <= 2; ++j) {
+                 if (s[i][j] == n) {
+                    si = i;
+                    sj = j;
+                 }
+              }
+           }
+
+           for(i = 0; i <= 2; ++i) {
+              for(j = 0; j <= 2; ++j) {
+                 if (t[i][j] == n) {
+                    d = d + Math.abs(i - si) + Math.abs(j - sj);
+                 }
+              }
+           }
+        }
+
+        return d;
+     }
+     
+     private int hamming(int[][] s, int[][] t) {
+  	   int hamming = 0;
+  	   
+  	   for(int i = 0; i <= 2; i++) {
+  		   for(int j = 0; j <= 2; j++) {
+  			   if( s[i][j] != t[i][j]) {
+  				   hamming++;
+  			   }
+  		   }
+  	   }
+  	   return hamming;
+     }
+     
     public String toString() {
     	String output = "\n";
     	for(int[] row: this.getPuzzleLayout()) {

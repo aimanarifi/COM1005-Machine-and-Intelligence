@@ -2,14 +2,14 @@ public class EpuzzleSearch extends Search {
 	
 	private int[][] puzzleLayout;
 	private int[][] target;
-	private EpuzzGen puzzleGen;
+	private EpuzzGen puzzGen;
 	private String remCostCalcMethod;
 	
 	//Constructor(s)
-	public EpuzzleSearch(int[][] startingLayout, int[][] target, EpuzzGen puzzG, String m) {
+	public EpuzzleSearch(int[][] startingLayout, int[][] target, EpuzzGen puzzGen, String m) {
 		puzzleLayout = startingLayout;
 		this.target = target;
-		puzzleGen = puzzG;
+		this.puzzGen = puzzGen;
 		remCostCalcMethod = m;
 	}
 	
@@ -20,10 +20,6 @@ public class EpuzzleSearch extends Search {
 	
 	public int[][] getTarget() {
 		return target;
-	}
-	
-	public EpuzzGen getPuzzGen() {
-		return puzzleGen;
 	}
 	
 	public String getRemCostCalcMethod() {
